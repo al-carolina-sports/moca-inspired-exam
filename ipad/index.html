@@ -1,0 +1,71 @@
+<!doctype html>
+<html lang="en" data-platform="ipad">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover" />
+  <!-- The page can make no network requests of its own (connect-src 'none'); speech services are the browser's. -->
+  <meta http-equiv="Content-Security-Policy" content="default-src 'self'; script-src 'self'; style-src 'self' 'unsafe-inline'; img-src 'self' data: blob:; media-src 'self'; connect-src 'none'; form-action 'none'; base-uri 'none'; object-src 'none'" />
+  <meta name="theme-color" content="#2f6fed" />
+  <meta name="apple-mobile-web-app-capable" content="yes" />
+  <meta name="mobile-web-app-capable" content="yes" />
+  <meta name="apple-mobile-web-app-title" content="Cognitive Exam" />
+  <meta name="apple-mobile-web-app-status-bar-style" content="default" />
+  <meta name="format-detection" content="telephone=no" />
+  <title>Cognitive Exam (iPad)</title>
+  <link rel="icon" href="data:," />
+  <link rel="apple-touch-icon" href="../apple-touch-icon.png" />
+  <link rel="manifest" href="manifest.webmanifest" />
+  <link rel="stylesheet" href="../styles.css" />
+</head>
+<body class="plat-ipad">
+  <div class="app">
+    <header class="hero card">
+      <div>
+        <div class="eyebrow">Cognitive Exam &middot; iPad version &middot; v4.0</div>
+        <h1>Cognitive Exam</h1>
+        <p class="muted small">Informal and customizable. Not validated. Not diagnostic.</p>
+      </div>
+      <div class="score-panel">
+        <button id="voiceToggle" type="button" class="btn hidden" aria-label="Turn spoken stimuli on or off"></button>
+        <div><span>Elapsed</span><strong id="elapsed">0:00</strong></div>
+        <div><span>Progress</span><strong id="progressText">&ndash;</strong></div>
+      </div>
+    </header>
+
+    <div id="speechBanner" class="warn-box hidden" role="status" style="margin-bottom:18px"></div>
+
+    <main class="layout">
+      <aside class="card side">
+        <h3>Domains</h3>
+        <ol id="sectionList" class="steps"></ol>
+        <div class="divider"></div>
+        <p class="small muted">
+          Informal cognitive exam. It has <strong>not</strong> been validated and cannot diagnose any condition.
+        </p>
+      </aside>
+
+      <section class="card main-card">
+        <div id="setupScreen"></div>
+        <div id="testScreen" class="hidden">
+          <div class="section-top">
+            <div>
+              <div id="sectionKicker" class="eyebrow">Section</div>
+              <h2 id="sectionTitle">Section</h2>
+            </div>
+          </div>
+          <div id="content" class="content"></div>
+        </div>
+        <div id="reviewScreen" class="hidden"></div>
+      </section>
+    </main>
+    <p class="small muted foot"><a href="../index.html" id="homeLink">All versions</a></p>
+  </div>
+
+  <script src="../assets.js"></script>
+  <script src="../speech.js"></script>
+  <script src="../core.js"></script>
+  <script src="../ui.js"></script>
+  <script src="../setup.js"></script>
+  <script src="../app.js"></script>
+</body>
+</html>

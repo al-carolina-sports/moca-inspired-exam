@@ -1,122 +1,134 @@
-MoCA-INSPIRED COGNITIVE SCREENING (v3.2: iPad + read-aloud)
-=========================================
-An informal screening inspired by the MoCA. It is NOT the official Montreal Cognitive
-Assessment, it has not been validated, and it is not diagnostic.
+COGNITIVE EXAM  (v4.0: customizable, iPad + Windows)
+====================================================
+An informal, customizable cognitive exam. It has NOT been validated, it has no norms or cut-off
+scores, and it is NOT diagnostic. Use it only as one piece of information alongside clinical
+judgement. A clinician should review every answer and score. All items (words, sentences, digit
+strings, abstraction pairs, drawings, icons) are original.
+
+TWO ENTRY POINTS, ONE APP
+-------------------------
+  index.html            chooser page with both links
+  ipad/    (iPad)       larger touch targets, Safari Dictation tips, touch-first drawing,
+                        "Add to Home Screen" app whose start page is /ipad/
+  windows/ (Windows)    mouse and keyboard friendly, Chrome/Edge speech tips, wider layout
+Both load exactly the same code (app.js, core.js, setup.js ...), the same item banks and the same
+scoring, and they share the same saved forms (same browser storage when hosted at one address), so
+results are comparable. The platform is recorded in every result export.
+All paths are relative, so the folder works from any address or sub-folder, for example
+https://<account>.github.io/<repo>/ipad/ now and under a different repo name later.
+
+HOW THE EXAM FLOWS
+------------------
+1. EXAMINER SETUP. Every item has a sensible default and a "Randomize" button that draws from the
+   built-in banks. You can change anything:
+     1  Alternating trail: numbers+letters, plants+animals (small icons with a sequence number),
+        numbers+weekdays, or numbers+months. 5 pairs. Scored: completed with 0 errors.
+     2  Copy the figure: cube, triangular prism, square pyramid or hexagonal prism (wire-frame,
+        random orientation each session). 1 point, scored by hand with the criteria shown.
+     3  Clock drawing (3 points, unchanged).
+     4  Naming: pick 3 animals from the picture library; edit the accepted answers.
+     5  Memory: 5 words, an optional category cue for each, and the two distractors for the
+        multiple-choice round (typed, or drawn from the category bank).
+     6  Digit span: type 5 forward and 3 backward digits (digits only, validated). The examinee
+        only HEARS them (1 per second); the digits are never shown on screen.
+     7  Letter tapping (unchanged).
+     8  Serial 7s: choose the starting number (20-200; default random 80-100).
+     9  Sentence repetition: 2 sentences, typed or picked from the 16-sentence bank.
+    10  Letter fluency: choose the letter.
+    11  Abstraction: choose 2 of the 19 built-in pairs, or add your own pair with accepted keywords.
+    12  Delayed recall uses your memory words.
+    13  Orientation (unchanged).
+    Extended section (optional, scored separately): your own 7 words, digit strings, serial start
+    and pairs.
+    Additional measures (optional, each scored separately and NOT part of the /30):
+      Category fluency (animals, 60 s, optional pass threshold), Stroop colour-word (about 20
+      trials; accuracy and mean reaction time), 3-step command following with tap targets,
+      reverse spelling of a 5-letter word (default WORLD) and simple reaction time (about 10
+      trials; median ms).
+   Save the setup under a name (Form A, Form B ...) in this browser, and Export / Import it as a
+   JSON file to use the same form on another device. Use a different form at each repeat visit.
+2. HAND-OVER SCREEN. After "Continue", the setup is removed from the page, so nothing you typed
+   can be seen. Hand the device to the examinee, who presses Begin. ("Examiner: back to setup"
+   brings the setup back.)
+3. THE EXAM, then RESULTS (examiner review). Every score can be changed on the results page.
+   Download results as JSON (full detail) and CSV (one row per item score).
+
+WHAT THE RESULT FILES RECORD
+----------------------------
+Form name, a hash (SHA-256) of the form contents, the exact form contents, app version "4.0",
+platform (ipad / windows), a random session ID and the optional participant ID, plus item scores,
+answers, replay counts and timings. Do NOT type a name, date of birth or other identifying details
+as the participant ID (use a code such as P-014); the box warns you if it looks like a name.
+Results are never sent anywhere and are not stored in the browser; they exist until you download
+them or close the tab. Saved FORMS (the items, no participant data) are stored in the browser.
 
 HOW TO LAUNCH (Windows)
 -----------------------
 1. Unzip the whole folder somewhere (for example your Desktop). Do not run it from inside the zip.
 2. Double-click  start-exam.bat
-   - A black window opens ("MoCA-inspired exam is running at http://localhost:8765/").
-   - Your default browser opens the exam. Leave the black window open while you use the exam.
-   - To stop: close the black window (or press Ctrl+C in it).
-3. Use Google Chrome or Microsoft Edge (recommended). If your default browser is something else,
-   open Chrome/Edge and go to  http://localhost:8765/  while the black window is running.
+   - A window opens and tells you the address (http://localhost:8765/). Your browser opens the
+     Windows version. Leave the window open while you use the exam. Close it (or Ctrl+C) to stop.
+   - The launcher runs PowerShell with -ExecutionPolicy Bypass, first removes the "downloaded from
+     the internet" mark from the folder (Unblock-File), and if "localhost" cannot be used it falls
+     back to 127.0.0.1. If something fails, the window stays open and shows the reason (it does
+     not close). If PowerShell is unavailable it tries "python -m http.server 8765".
+3. Use Google Chrome or Microsoft Edge. If your default browser is different, open Chrome/Edge
+   and go to http://localhost:8765/windows/
+Everything except spoken answers also works by opening windows/index.html directly (file://), but
+speech recognition needs http://localhost or https, so use start-exam.bat for voice.
 
-If Windows SmartScreen or your antivirus warns about start-exam.bat, choose "More info" > "Run anyway"
-only if you trust this folder. The script only serves this folder on your own computer (localhost);
-it is not reachable from other computers.
-
-WHY NOT JUST DOUBLE-CLICK index.html?
--------------------------------------
-Everything except voice answers works that way (you can type every answer). But Chrome and Edge
-block speech recognition on pages opened as files (file://). Speech recognition needs a secure
-page, and http://localhost is accepted as secure. If you open index.html directly, the exam shows
-a notice at the top telling you to use start-exam.bat; typing keeps working.
-
-MICROPHONE / VOICE ANSWERS
---------------------------
-- On the start page, press "Speak" in the Microphone check. The browser asks for permission to use
-  the microphone: click ALLOW. (If you clicked Block by mistake: click the lock/mic icon in the
-  address bar, allow the microphone, and reload.)
-- During the exam each answer box has a "Speak" button. Press it, answer, and the words appear in the
-  same box. You can fix them by typing. Typing always works as a fallback.
-- Verbal fluency: the Start button begins the microphone and the 60-second timer together. The words
-  you say appear live. At 60 seconds it stops itself and lists the words as chips. Click a chip to
-  strike it out (names, places, repeats, wrong words) or click again to restore it. 11 or more valid
-  words = 1 point.
-- Spoken numbers are converted to digits ("seven two eight one" -> 7281).
-- Speech recognition is imperfect (accents, background noise, homophones). The clinician should
-  review the typed/spoken text and the scores before relying on them. Every score can be changed on
-  the results page.
-
-PRIVACY (desktop speech recognition)
--------------------------------------
-Speech recognition in Chrome/Edge sends the audio to the browser's cloud speech service (Google or
-Microsoft) over the internet. So:
-  * Do NOT use real patient names or identifiers while testing voice features.
-  * The exam itself stores nothing on a server. Results stay in the browser tab until you download
-    the JSON file or close the tab.
-
-USING IT ON AN iPAD (Safari)
+USING IT ON AN iPad (Safari)
 ----------------------------
-The exam is plain static web files, so it runs on an iPad as soon as the files are on an HTTPS web
-address (a file:// or http:// address will NOT work for the microphone on Safari). An iPad cannot run
-start-exam.bat. See "PUTTING IT ON THE WEB" below for the easiest ways to host it.
-- iPadOS 14.5 or later, Safari. Landscape or portrait both work.
-- Open the web address in Safari. Optional: Share > "Add to Home Screen" gives a full-screen app icon.
-- Trail making, copy-the-figure and clock drawing use the finger or Apple Pencil. The page does not
-  scroll while you draw.
-- Voice answers (the "Speak" buttons): Safari uses Siri/Dictation, so Settings > General > Keyboard >
-  "Enable Dictation" must be ON, and the first time Safari asks for microphone access: tap Allow.
-  If dictation is not available the exam says so and you can type every answer instead.
-- Verbal fluency: Safari may stop listening on its own after a pause; the exam restarts it
-  automatically during the 60 seconds.
+Host the folder at an HTTPS address (see below) and open  <address>/ipad/  in Safari (iPadOS 14.5+).
+Optional: Share > Add to Home Screen gives a full-screen app that starts at /ipad/.
+- Drawing tasks use a finger or Apple Pencil; the page does not scroll while you draw.
+- Voice answers need Settings > General > Keyboard > Enable Dictation, and Allow when Safari asks
+  for the microphone. Typing always works.
+- Read-aloud: raise the volume and make sure silent mode is OFF. Better voices: Settings >
+  Accessibility > Spoken Content > Voices (download an Enhanced or Premium voice).
+- Tip: turn on Guided Access (Settings > Accessibility) before handing the iPad over, so the
+  examinee cannot leave the page.
 
-READING THE WORDS, DIGITS, LETTERS AND SENTENCES ALOUD
-------------------------------------------------------
-- On by default (turn off on the start page, or with the "Voice" button at the top during the exam).
-- Memory words, digit spans (forward and backward), the letter-tapping list, the extended 7-word list and
-  the sentence repetition items are spoken by the browser's own text-to-speech voice. Nothing is shown
-  on screen while a voice is reading, so the examinee must listen.
-- Words and digits are read one per second. Letters are read one per second; tap the big TAP button
-  (or press the space bar) every time the target letter is heard. A tap counts if it is within 1.5
-  seconds of the start of that letter. Up to 1 error (missed target or extra tap) still earns the point.
-- "Replay" (examiner) repeats a word list, digit list or sentence. Every replay is recorded in the
-  results ("REPLAYED n x") and flags the item for review. "Repeat this task" for the letters is also
-  recorded and the LAST attempt is scored.
-- On the start page, press "Test voice" first. English (US) is chosen by default; you can pick another
-  voice and the speaking speed. Better voices: iPad Settings > Accessibility > Spoken Content >
-  Voices > download an "Enhanced" or "Premium" voice.
-- iPad volume: turn the volume up and make sure the side switch / Control Centre silent mode is OFF,
-  otherwise the voice is silent. On the Home Screen app version the same applies.
-- If the browser cannot speak at all, the exam says so and shows the items on screen instead.
+READING ITEMS ALOUD (and the digit-span rule)
+---------------------------------------------
+Memory words, digits, letters and sentences are spoken by the browser's text-to-speech voice. For
+the digit span nothing is ever drawn on the screen. If the browser cannot speak, the exam shows an
+"examiner reads aloud" notice and an examiner-only panel (digits hidden behind dots until you press
+Show). Press Hide and then hand the device over before the examinee answers. Re-showing the digits
+is counted as a replay in the results.
 
-PUTTING IT ON THE WEB (not done yet; nothing has been published)
-----------------------------------------------------------------
-Upload the files of this folder (not the zip) to any static HTTPS host. Easiest options:
-  1. Netlify Drop (https://app.netlify.com/drop): drag the unzipped folder onto the page. You get a
-     https://random-name.netlify.app address in seconds. Sign in to keep it permanently.
-  2. GitHub Pages: create a repository (for example under the al-carolina-sports account), upload the files,
-     Settings > Pages > Deploy from branch > main / root. Address: https://<account>.github.io/<repo>/
-     (free plans need a public repository; the files contain no patient data).
-  3. Cloudflare Pages: Workers & Pages > Create > Pages > Upload assets, upload the folder.
-The web address is public to anyone who has the link, so use a non-obvious name. The exam contains no
-patient data; results exist only inside the browser on the device being used.
+PUTTING IT ON THE WEB
+---------------------
+Upload the files of this folder (not the zip) to any static HTTPS host: GitHub Pages (Settings >
+Pages > Deploy from branch), Netlify Drop, or Cloudflare Pages. Use a non-obvious address; it is
+public to anyone with the link. The exam contains no patient data. If you later rename the
+repository nothing needs changing (all paths are relative); iPad users re-add the Home Screen icon.
 
 PRIVACY (what leaves the device)
 --------------------------------
-- The exam makes no network requests of its own. The page carries a Content-Security-Policy that blocks
-  every outgoing connection (connect-src 'none'), and no external scripts, fonts or images are used.
-- Results are never sent anywhere and are not saved: they live in the browser tab until you press
-  "Download results" or close the tab.
-- The only things that leave the device are the browser's own speech services: (a) speech
-  RECOGNITION for the "Speak" buttons (Chrome/Edge: Google/Microsoft cloud; Safari: Apple's service) and
-  (b) text-to-speech voices are normally on-device, but the browser may use a network voice if you pick
-  one. Use no real patient identifiers when testing.
+- The exam makes no network requests of its own. Every page carries a Content-Security-Policy that
+  blocks all outgoing connections (connect-src 'none'); no external scripts, fonts or images.
+- Only the browser's own speech services can use the network: speech RECOGNITION (Chrome/Edge:
+  Google/Microsoft cloud; Safari: Apple) and, if you pick one, a network text-to-speech voice. Use
+  no real patient identifiers while testing voice features.
 
 TROUBLESHOOTING
 ---------------
-- "Voice answers are off" notice at the top: you opened index.html directly, or the browser does not
-  support speech recognition. Use start-exam.bat and Chrome/Edge.
-- "The microphone is blocked": allow the microphone (lock icon in the address bar) and reload.
-- "Could not reach the speech service": speech needs an internet connection.
-- Port 8765 already in use: another exam window is already running. Use it, or close it and retry.
-- No PowerShell? start-exam.bat falls back to "python -m http.server 8765" if Python is installed.
+- "Voice answers are off" notice: you opened the page as a file, or the browser lacks speech
+  recognition. Use start-exam.bat and Chrome/Edge.
+- "The microphone is blocked": click the lock icon in the address bar, allow it, and reload.
+- Port 8765 already in use: an exam window is already running; use it or close it and retry.
+- A saved form is missing: forms are stored per browser and per address (a different address or a
+  private window has its own list). Export/Import the form file to move it.
+- Stroop uses red/blue/green/yellow ink; examinees with colour-vision deficiency may need the
+  Stroop section left off. Reaction times depend on the device and are only comparable on the same
+  device.
 
 FILES
 -----
-index.html, app.js, speech.js, styles.css, assets.js   the exam (no internet libraries needed)
-manifest.webmanifest, *.png, _headers, .nojekyll       iPad Home Screen icon/app info and web-hosting helpers
-start-exam.bat, serve.ps1                               local server + launcher (Windows PowerShell 5.1+)
-CHANGES.md                                              what changed from v2 and why
+index.html, choose.js                chooser page
+ipad/, windows/                      the two entry pages and their manifests
+app.js, core.js, setup.js, ui.js, speech.js, assets.js, styles.css     the app (shared)
+icon-*.png, apple-touch-icon.png, _headers, .nojekyll    icons and hosting helpers
+start-exam.bat, serve.ps1            local launcher for Windows (PowerShell 5.1+)
+CHANGES.md                           what is new in v4

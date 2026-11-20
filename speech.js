@@ -1,5 +1,5 @@
-/* Pure speech-transcript helpers for the MoCA-inspired screening (no DOM, no answers).
- * Works in the browser (window.MocaSpeech) and in Node (module.exports) for unit tests. */
+/* Pure speech-transcript helpers for the Cognitive Exam (no DOM, no answers).
+ * Works in the browser (window.CESpeech) and in Node (module.exports) for unit tests. */
 (function (root) {
   "use strict";
 
@@ -117,6 +117,48 @@
     return { chips, duplicates };
   }
 
+
+  // ---- category fluency (e.g. animals): no starting letter; two-word names are joined ----
+  const TWO_WORD = ["polar bear", "guinea pig", "sea lion", "killer whale", "blue whale", "grizzly bear", "brown bear", "black bear", "panda bear", "hermit crab", "horse shoe crab", "fruit bat", "mountain lion", "snow leopard", "sea horse", "great white", "bald eagle", "golden retriever", "german shepherd", "gold fish", "komodo dragon", "arctic fox", "red fox", "water buffalo", "wild boar", "prairie dog", "sea otter", "sea turtle", "tree frog", "bull frog", "monkey wrench"];
+  const CAT_FILLERS = new Set(["the", "a", "an", "and", "or", "um", "uh", "hmm", "hm", "okay", "ok", "oh", "like", "its", "it", "is", "i", "im", "ill", "ive", "so", "well", "let", "lets", "me", "think", "of", "more", "also", "then", "another", "animal", "animals", "yeah", "yes", "no", "not", "now", "start", "starts", "done", "finished", "that", "this", "was", "wait", "what", "next", "one", "two", "have", "got", "can", "cant", "dont", "know", "there", "they", "you", "and", "to", "for", "in", "on", "at", "as", "be", "do", "go", "my", "by", "with"]);
+  function extractCategory(text) {
+    const seen = new Set(), chips = []; let duplicates = 0;
+    String(text || "").split(/\n+/).forEach((line) => {
+      line.split(/[,;]+/).forEach((seg) => {
+        let toks = seg.toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter(Boolean);
+        const out = [];
+        for (let i = 0; i < toks.length; i++) {
+          const two = toks[i] + " " + toks[i + 1];
+          if (i + 1 < toks.length && TWO_WORD.includes(two)) { out.push(two); i++; } else out.push(toks[i]);
+        }
+        out.forEach((w) => {
+          if (w.length < 2) return;
+          if (CAT_FILLERS.has(w)) return;
+          const st = w.split(" ").map(stemOf).join(" ");
+          if (seen.has(st)) { duplicates++; return; }
+          seen.add(st);
+          chips.push({ word: w, flags: [], struck: false });
+        });
+      });
+    });
+    return { chips, duplicates };
+  }
+
+  // ---- spelling aloud: letters or letter names -> string of letters ----
+  const LETTER_NAMES = { ay: "a", eh: "a", bee: "b", be: "b", see: "c", sea: "c", cee: "c", dee: "d", ee: "e", eff: "f", ef: "f", gee: "g", aitch: "h", eye: "i", jay: "j", kay: "k", okay: "k", el: "l", elle: "l", em: "m", en: "n", oh: "o", o: "o", pee: "p", pea: "p", cue: "q", queue: "q", ar: "r", are: "r", ess: "s", es: "s", tee: "t", tea: "t", you: "u", yu: "u", vee: "v", ex: "x", why: "y", wye: "y", zee: "z", zed: "z", "double": "", dub: "" };
+  function spokenLetters(text) {
+    const toks = String(text || "").toLowerCase().replace(/[^a-z\s]/g, " ").split(/\s+/).filter(Boolean);
+    let out = "";
+    for (let i = 0; i < toks.length; i++) {
+      const t = toks[i];
+      if (t === "double" && /^(you|u|yu|dub|ew)$/.test(toks[i + 1] || "")) { out += "w"; i++; continue; }
+      if (t.length === 1) { out += t; continue; }
+      if (LETTER_NAMES[t] !== undefined) { out += LETTER_NAMES[t]; continue; }
+      if (/^[a-z]+$/.test(t) && toks.length === 1) { out += t; continue; } // one typed word like "dlrow"
+    }
+    return out.toUpperCase();
+  }
+
   // ---- word-level comparison for sentence repetition ----
   function words(s) { return String(s || "").toLowerCase().replace(/[^a-z0-9'\s]/g, " ").replace(/'/g, "").split(/\s+/).filter(Boolean); }
   function wordMatch(typed, target) {
@@ -164,7 +206,7 @@
     return { hits, misses, falseTaps, duplicates, errors: misses + falseTaps, targets: targets.length, point: misses + falseTaps <= 1 ? 1 : 0, matches };
   }
 
-  const api = { spokenDigits, spokenNumber, spokenYear, extractFluency, stemOf, wordMatch, digitName, letterSay, planSchedule, scoreVigilance };
+  const api = { extractCategory, spokenLetters, spokenDigits, spokenNumber, spokenYear, extractFluency, stemOf, wordMatch, digitName, letterSay, planSchedule, scoreVigilance };
   if (typeof module !== "undefined" && module.exports) module.exports = api;
-  root.MocaSpeech = api;
+  root.CESpeech = api;
 })(typeof window !== "undefined" ? window : globalThis);
