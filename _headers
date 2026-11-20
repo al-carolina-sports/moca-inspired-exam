@@ -1,0 +1,6 @@
+# Used by Netlify and Cloudflare Pages (GitHub Pages ignores this file; the page also carries a CSP <meta>).
+/*
+  X-Content-Type-Options: nosniff
+  Referrer-Policy: no-referrer
+  Permissions-Policy: microphone=(self), camera=(), geolocation=()
+  Cache-Control: no-cache
